@@ -29,6 +29,6 @@ class BittrexCalculator:
 
     @staticmethod
     def is_profitable(buy, sell):
-        commission1 = buy * BITTREX_COMMISSION_FEE
-        commission2 = sell * BITTREX_COMMISSION_FEE
-        return (sell - buy) - (commission1 + commission2) > 0
+        commission1 = long(buy * BITTREX_COMMISSION_FEE)
+        commission2 = long(sell * BITTREX_COMMISSION_FEE)
+        return long(sell) - commission1 - commission2 - long(buy) > 0

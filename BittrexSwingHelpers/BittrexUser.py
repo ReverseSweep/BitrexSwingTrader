@@ -1,5 +1,6 @@
 from CustomExceptions.BuyTooHighError import BuyTooHighError
-import BittrexCalculator
+from BittrexCalculator import BittrexCalculator
+import time
 
 
 class BittrexUser:
@@ -12,26 +13,23 @@ class BittrexUser:
     def __init__(self, api):
         self.api = api
 
-    def select_market(self):
-        alt_balance = None
-        while alt_balance is None:
-            try:
-                target = raw_input("Which market would you like to target? \n")
-                alt_balance = self.api.get_balance(target)[u'result'][u'Available']
-                self.target_market = 'BTC-' + str(target)
-            except TypeError:
-                print ('Enter a real market.')
+    def select_market(self, market_name):
+        try:
+            self.target_market = 'BTC-' + str(market_name)
+        except TypeError:
+            print ('Enter a valid market.')
 
-    def get_limits(self):
-        print ("Lets swing trade some %s coins! \n" % self.target_market)
-        self.buy_price = raw_input("At what price do you want to buy at? "
-                              "(Usage: enter price in BTC, or \'BidPrice\' or \'AskPrice\' \n")
-        if self.buy_price > self.api.get_ticker(self.target_market)[u'result'][u'Ask']:
-            raise BuyTooHighError("your bid price is higher than the Ask price, try again")
-
-        self.sell_price = raw_input("At what price do you want to sell at? "
-                               "(Usage: enter price in BTC, or \'SellPrice\' \n")
-
-        if BittrexCalculator.is_profitable(self.buy_price, self.sell_price):
+    def set_limits(self, buy_price, sell_price, quantity):
+        self.buy_price = buy_price
+        self.sell_price = sell_price
+        self.quantity = quantity
+        if not BittrexCalculator.is_profitable(self.buy_price, self.sell_price):
             raise BuyTooHighError("You must sell it for higher if you want to make a profit!")
+
+
+    def trade(self):
+        buy_object = self.api.buy_limit(self.target_market, self.quantity, self.bid_price)
+        #check every 10 seconds to see if the buy order has been filled. If it has, place a sell order, else keep checking
+
+        print(buy_object)
 
