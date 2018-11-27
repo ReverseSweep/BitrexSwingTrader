@@ -1,4 +1,6 @@
 # Bittrex's minimum order total in BTC
+from ctypes import c_longlong as ll
+
 BITTREX_MINIMUM_ORDER = 0.0005
 # Bittrex's commission fee (converted to decimal)
 BITTREX_COMMISSION_FEE = 0.0025
@@ -29,6 +31,6 @@ class BittrexCalculator:
 
     @staticmethod
     def is_profitable(buy, sell):
-        commission1 = long(buy * BITTREX_COMMISSION_FEE)
-        commission2 = long(sell * BITTREX_COMMISSION_FEE)
-        return long(sell) - commission1 - commission2 - long(buy) > 0
+        commission1 = (buy * BITTREX_COMMISSION_FEE)
+        commission2 = (sell * BITTREX_COMMISSION_FEE)
+        return (sell) - commission1 - commission2 - (buy) > 0

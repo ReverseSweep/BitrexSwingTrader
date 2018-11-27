@@ -1,5 +1,4 @@
 from CustomExceptions.BuyTooHighError import BuyTooHighError
-from BittrexCalculator import BittrexCalculator
 import time
 
 
@@ -23,13 +22,28 @@ class BittrexUser:
         self.buy_price = buy_price
         self.sell_price = sell_price
         self.quantity = quantity
+        from BittrexSwingHelpers.BittrexCalculator import BittrexCalculator
         if not BittrexCalculator.is_profitable(self.buy_price, self.sell_price):
             raise BuyTooHighError("You must sell it for higher if you want to make a profit!")
 
 
     def trade(self):
-        buy_object = self.api.buy_limit(self.target_market, self.quantity, self.bid_price)
-        #check every 10 seconds to see if the buy order has been filled. If it has, place a sell order, else keep checking
+        buy_object = self.api.buy_limit(self.target_market, self.quantity, self.buy_price)
+        curOrderID = buy_object['result']['uuid']
 
-        print(buy_object)
+        while True:
+            self.api.wait()
+            isFulfilled = True
+            orders = self.api.get_open_orders(self.target_market)
+            for order in orders['result']:
+                if order['OrderUuid'] == curOrderID:
+                    isFulfilled = False
+            self.api.wait()
+            if isFulfilled:
+                self.api.sell_limit(self.target_market, self.quantity, self.sell_price)
+                print("placed sell order")
+                break
+
+
+
 

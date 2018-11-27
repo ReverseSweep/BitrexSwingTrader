@@ -4,13 +4,9 @@ from BittrexSwingHelpers.BittrexUser import *
 
 if __name__ == '__main__':
     # Usage is Bittrex("API Key", "API secret Key")
-    api = Bittrex("24f34272a52148d79f63bc8f9fffe299", "2d4e08340f6c4eee8625a0503e6aed5d")
+    api = Bittrex("3a1ece39c1cb475b85796d29cc1eef2b", "a4b1e1ec83cf4bf78934bd51903f0e40")
 
     bittrex_user = BittrexUser(api)
     bittrex_user.select_market("DOGE")
-    bittrex_user.set_limits(0.00009, 0.79, 1000)
-
-    # api.buy_limit(market,9000,bid_price)
-    #print("buy order placed @ %s" % bid_price)
-
-
+    bittrex_user.set_limits(buy_price=0.00000054, sell_price=0.00000059, quantity=1000)
+    bittrex_user.trade()
